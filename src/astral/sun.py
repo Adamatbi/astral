@@ -1083,6 +1083,101 @@ def twilight(
         return start, end
     else:
         return end, start
+    
+
+def nautical_twilight(
+    observer: Observer,
+    date: Optional[datetime.date] = None,
+    direction: SunDirection = SunDirection.RISING,
+    tzinfo: Union[str, datetime.tzinfo] = datetime.timezone.utc,
+) -> TimePeriod:
+    """Returns the start and end times of nautical Twilight
+    when the sun is traversing in the specified direction.
+
+    This method defines nautical twilight as being between the time
+    when the sun is at -12 degrees and sunrise/sunset.
+
+    Args:
+        observer:   Observer to calculate nautical twilight for
+        date:       Date for which to calculate the times.
+                    Default is today's date in the timezone `tzinfo`.
+        direction:  Determines whether the time is for the sun rising or setting.
+                    Use ``astral.SunDirection.RISING`` or
+                    ``astral.SunDirection.SETTING``.
+        tzinfo:     Timezone to return times in. Default is UTC.
+
+    Returns:
+        A tuple of the date and time at which nautical twilight starts and ends.
+
+    Raises:
+        ValueError: if the sun does not rise or does not set
+    """
+
+    if isinstance(tzinfo, str):
+        tzinfo = zoneinfo.ZoneInfo(tzinfo)  # type: ignore
+
+    if date is None:
+        date = today(tzinfo)  # type: ignore
+
+    start = time_of_transit(observer, date, 90 + 12, direction,).astimezone(
+        tzinfo  # type: ignore
+    )
+    if direction == SunDirection.RISING:
+        end = sunrise(observer, date, tzinfo).astimezone(tzinfo)  # type: ignore
+    else:
+        end = sunset(observer, date, tzinfo).astimezone(tzinfo)  # type: ignore
+
+    if direction == SunDirection.RISING:
+        return start, end
+    else:
+        return end, start
+    
+def astronomical_twilight(
+    observer: Observer,
+    date: Optional[datetime.date] = None,
+    direction: SunDirection = SunDirection.RISING,
+    tzinfo: Union[str, datetime.tzinfo] = datetime.timezone.utc,
+) -> TimePeriod:
+    """Returns the start and end times of astronomical Twilight
+    when the sun is traversing in the specified direction.
+
+    This method defines astronomical twilight as being between the time
+    when the sun is at -12 degrees and sunrise/sunset.
+
+    Args:
+        observer:   Observer to calculate astronomical twilight for
+        date:       Date for which to calculate the times.
+                    Default is today's date in the timezone `tzinfo`.
+        direction:  Determines whether the time is for the sun rising or setting.
+                    Use ``astral.SunDirection.RISING`` or
+                    ``astral.SunDirection.SETTING``.
+        tzinfo:     Timezone to return times in. Default is UTC.
+
+    Returns:
+        A tuple of the date and time at which astronomical twilight starts and ends.
+
+    Raises:
+        ValueError: if the sun does not rise or does not set
+    """
+
+    if isinstance(tzinfo, str):
+        tzinfo = zoneinfo.ZoneInfo(tzinfo)  # type: ignore
+
+    if date is None:
+        date = today(tzinfo)  # type: ignore
+
+    start = time_of_transit(observer, date, 90 + 18, direction,).astimezone(
+        tzinfo  # type: ignore
+    )
+    if direction == SunDirection.RISING:
+        end = sunrise(observer, date, tzinfo).astimezone(tzinfo)  # type: ignore
+    else:
+        end = sunset(observer, date, tzinfo).astimezone(tzinfo)  # type: ignore
+
+    if direction == SunDirection.RISING:
+        return start, end
+    else:
+        return end, start
 
 
 def golden_hour(
